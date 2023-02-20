@@ -1,7 +1,10 @@
 package com.demo.cepapi.service;
 
+import com.demo.cepapi.client.IBGEClient;
 import com.demo.cepapi.client.ViaCepClient;
+import com.demo.cepapi.config.FreightProperties;
 import com.demo.cepapi.domain.dto.AddressResponseDTO;
+import com.demo.cepapi.domain.dto.IbgeResponseDTO;
 import com.demo.cepapi.domain.response.AddressResponse;
 import com.demo.cepapi.util.CepUtils;
 import feign.FeignException;
@@ -17,6 +20,12 @@ public class CepService {
     @Autowired
     private ViaCepClient viaCepClient;
 
+    @Autowired
+    private IBGEClient ibgeClient;
+
+    @Autowired
+    private FreightProperties freightProperties;
+
     public ResponseEntity<AddressResponse> getAdressByCep(String cep) {
         if(!CepUtils.validCep(cep)){
             log.info("Invalid cep: {}", cep);
@@ -25,6 +34,10 @@ public class CepService {
 
         try {
             AddressResponseDTO addressByCep = viaCepClient.getAddressByCep(cep);
+            log.info("::::: {}", addressByCep.getIbge());
+            IbgeResponseDTO regionByUF = ibgeClient.getRegionByUF(addressByCep.getIbge());
+            log.info("::::: {}", regionByUF.getMicroregion().getMesoregion().getUf().getRegion().getName());
+            String freight = calculateFreight(regionByUF.getMicroregion().getMesoregion().getUf().getRegion().getName());
 
             return ResponseEntity.ok(AddressResponse.build(addressByCep.getCep(),
                     addressByCep.getLogradouro(),
@@ -32,12 +45,16 @@ public class CepService {
                     addressByCep.getBairro(),
                     addressByCep.getLocalidade(),
                     addressByCep.getUf(),
-                    "frete aqui"));
+                    String.format("R$ %s", freight)));
 
         }catch (FeignException e){
-
+            log.info(e.getMessage(), e.responseBody(), e.request());
         }
 
         return ResponseEntity.badRequest().build();
+    }
+
+    private String calculateFreight(String name){
+        return  freightProperties.getFreightValues().get(name);
     }
 }

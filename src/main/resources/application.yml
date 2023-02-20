@@ -2,3 +2,10 @@ server:
   port: 8080
   servlet:
     context-path: "/cep-api"
+
+freight:
+  sudeste: 7.85
+  centroOeste: 12.50
+  nordeste: 15.98
+  sul: 17.30
+  norte: 20.83
