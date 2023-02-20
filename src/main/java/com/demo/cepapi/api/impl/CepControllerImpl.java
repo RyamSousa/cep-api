@@ -1,8 +1,9 @@
 package com.demo.cepapi.api.impl;
 
 import com.demo.cepapi.api.CepController;
+import com.demo.cepapi.domain.request.AddressRequest;
 import com.demo.cepapi.domain.response.AddressResponse;
-import com.demo.cepapi.service.CepService;
+import com.demo.cepapi.service.impl.CepServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class CepControllerImpl implements CepController {
 
     @Autowired
-    private CepService addressService;
+    private CepServiceImpl addressService;
 
     @Override
-    public ResponseEntity<AddressResponse> getAddressByCep(String cep) {
-        return addressService.getAdressByCep(cep);
+    public ResponseEntity<AddressResponse> getAddressByCep(AddressRequest addressRequest) {
+        return addressService.getAdressByCep(addressRequest);
     }
 }

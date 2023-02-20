@@ -3,6 +3,10 @@ server:
   servlet:
     context-path: "/cep-api"
 
+via:
+    cep:
+      api: "viacep.com.br/ws/"
+
 freight:
   sudeste: 7.85
   centroOeste: 12.50
