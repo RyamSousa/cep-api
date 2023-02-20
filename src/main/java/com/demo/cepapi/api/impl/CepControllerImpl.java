@@ -17,6 +17,6 @@ public class CepControllerImpl implements CepController {
 
     @Override
     public ResponseEntity<AddressResponse> getAddressByCep(String cep) {
-        return ResponseEntity.ok(addressService.getAdressByCep(cep));
+        return addressService.getAdressByCep(cep);
     }
 }
