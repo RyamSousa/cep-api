@@ -3,9 +3,11 @@ server:
   servlet:
     context-path: "/cep-api"
 
-via:
-    cep:
-      api: "viacep.com.br/ws/"
+external:
+    api:
+      cep: "viacep.com.br/ws/"
+      ibge: "https://servicodados.ibge.gov.br/api/v1/localidades/municipios/"
+
 
 freight:
   sudeste: 7.85
