@@ -7,5 +7,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface CepService {
 
-    ResponseEntity<AddressResponse> getAdressByCep(AddressRequest request) throws CepException;
+    ResponseEntity<AddressResponse> getAddressByCep(AddressRequest request) throws CepException;
 }

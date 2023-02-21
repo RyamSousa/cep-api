@@ -1,8 +1,10 @@
 package com.demo.cepapi.domain.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
+@AllArgsConstructor(staticName = "build")
 public class AddressResponseDTO {
 
     private String cep;

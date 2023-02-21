@@ -29,7 +29,7 @@ public class CepServiceImpl implements CepService {
     @Autowired
     private FreightProperties freightProperties;
 
-    public ResponseEntity<AddressResponse> getAdressByCep(AddressRequest request) throws CepException {
+    public ResponseEntity<AddressResponse> getAddressByCep(AddressRequest request) throws CepException {
         if (request == null || request.getCep() == null || request.getCep().isBlank()
                 || !CepUtils.validCep(request.getCep())) {
             log.info("Invalid request: {}", request);
