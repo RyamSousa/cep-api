@@ -8,6 +8,10 @@ external:
       cep: "viacep.com.br/ws/"
       ibge: "https://servicodados.ibge.gov.br/api/v1/localidades/municipios/"
 
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 freight:
   sudeste: 7.85
