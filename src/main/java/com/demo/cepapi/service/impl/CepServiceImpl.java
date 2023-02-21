@@ -7,6 +7,8 @@ import com.demo.cepapi.domain.dto.AddressResponseDTO;
 import com.demo.cepapi.domain.dto.IbgeResponseDTO;
 import com.demo.cepapi.domain.request.AddressRequest;
 import com.demo.cepapi.domain.response.AddressResponse;
+import com.demo.cepapi.exception.CepException;
+import com.demo.cepapi.service.CepService;
 import com.demo.cepapi.util.CepUtils;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class CepServiceImpl {
+public class CepServiceImpl implements CepService {
 
     @Autowired
     private ViaCepClient viaCepClient;
@@ -27,15 +29,20 @@ public class CepServiceImpl {
     @Autowired
     private FreightProperties freightProperties;
 
-    public ResponseEntity<AddressResponse> getAdressByCep(AddressRequest request) {
+    public ResponseEntity<AddressResponse> getAdressByCep(AddressRequest request) throws CepException {
         if (request == null || request.getCep() == null || request.getCep().isBlank()
                 || !CepUtils.validCep(request.getCep())) {
             log.info("Invalid request: {}", request);
-            return ResponseEntity.badRequest().build();
+            throw new CepException("Informe o CEP", "");
         }
 
         try {
             AddressResponseDTO addressByCep = viaCepClient.getAddressByCep(request.getCep());
+
+            if (addressByCep.getErro() != null && addressByCep.getErro().equals("true")){
+                throw new CepException("CEP não encontrado", request.getCep());
+            }
+
             IbgeResponseDTO regionByUF = ibgeClient.getRegionByUF(addressByCep.getIbge());
             String freight = calculateFreight(regionByUF.getMicroregion().getMesoregion().getUf().getRegion().getName());
 
@@ -49,11 +56,11 @@ public class CepServiceImpl {
 
         } catch (FeignException e) {
             if (e.status() == 404){
-                ResponseEntity.notFound().build();
+                throw new CepException("CEP não encontrado", request.getCep());
             }
+            throw new CepException("Ocorreu um problema no nosso serviço, tente novamente mais tarde",
+                    request.getCep());
         }
-
-        return ResponseEntity.badRequest().build();
     }
 
     private String calculateFreight(String name) {

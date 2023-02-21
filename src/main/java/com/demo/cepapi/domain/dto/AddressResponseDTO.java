@@ -12,4 +12,5 @@ public class AddressResponseDTO {
     private String localidade;
     private String uf;
     private String ibge;
+    private String erro;
 }
